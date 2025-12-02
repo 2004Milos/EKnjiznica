@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace EKnjiznica.Migrations
 {
     /// <inheritdoc />
@@ -58,29 +60,13 @@ namespace EKnjiznica.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     YearPublished = table.Column<int>(type: "int", nullable: false),
+                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Book", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Member",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Member", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,12 +176,36 @@ namespace EKnjiznica.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Fine",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IssueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
+                    PaidDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Fine", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Fine_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Loan",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MemberID = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BookID = table.Column<int>(type: "int", nullable: false),
                     LoanDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -206,15 +216,15 @@ namespace EKnjiznica.Migrations
                 {
                     table.PrimaryKey("PK_Loan", x => x.ID);
                     table.ForeignKey(
+                        name: "FK_Loan_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Loan_Book_BookID",
                         column: x => x.BookID,
                         principalTable: "Book",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Loan_Member_MemberID",
-                        column: x => x.MemberID,
-                        principalTable: "Member",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -225,26 +235,65 @@ namespace EKnjiznica.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MemberID = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BookID = table.Column<int>(type: "int", nullable: false),
                     ReservationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reservation", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Reservation_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reservation_Book_BookID",
                         column: x => x.BookID,
                         principalTable: "Book",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Review",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BookID = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReviewDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Review", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Reservation_Member_MemberID",
-                        column: x => x.MemberID,
-                        principalTable: "Member",
+                        name: "FK_Review_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Review_Book_BookID",
+                        column: x => x.BookID,
+                        principalTable: "Book",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "27902f87-37b3-4242-8ca7-6ca036e73875", null, "Librarian", "LIBRARIAN" },
+                    { "98c714eb-d843-4522-97cd-80a10aa08037", null, "Member", "MEMBER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -287,14 +336,19 @@ namespace EKnjiznica.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Fine_UserId",
+                table: "Fine",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Loan_BookID",
                 table: "Loan",
                 column: "BookID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Loan_MemberID",
+                name: "IX_Loan_UserId",
                 table: "Loan",
-                column: "MemberID");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservation_BookID",
@@ -302,9 +356,19 @@ namespace EKnjiznica.Migrations
                 column: "BookID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reservation_MemberID",
+                name: "IX_Reservation_UserId",
                 table: "Reservation",
-                column: "MemberID");
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Review_BookID",
+                table: "Review",
+                column: "BookID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Review_UserId",
+                table: "Review",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -326,10 +390,16 @@ namespace EKnjiznica.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Fine");
+
+            migrationBuilder.DropTable(
                 name: "Loan");
 
             migrationBuilder.DropTable(
                 name: "Reservation");
+
+            migrationBuilder.DropTable(
+                name: "Review");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -339,9 +409,6 @@ namespace EKnjiznica.Migrations
 
             migrationBuilder.DropTable(
                 name: "Book");
-
-            migrationBuilder.DropTable(
-                name: "Member");
         }
     }
 }

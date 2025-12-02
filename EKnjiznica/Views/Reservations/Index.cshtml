@@ -1,0 +1,68 @@
+@model IEnumerable<EKnjiznica.Models.Reservation>
+
+@{
+    ViewData["Title"] = "All Reservations";
+}
+
+<h2>All Reservations</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Author</th>
+            <th>Member</th>
+            <th>Reservation Date</th>
+            <th>Expiry Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var reservation in Model)
+            {
+                <tr>
+                    <td>@reservation.Book.Title</td>
+                    <td>@reservation.Book.Author</td>
+                    <td>@reservation.User?.Email</td>
+                    <td>@reservation.ReservationDate.ToString("yyyy-MM-dd")</td>
+                    <td>@reservation.ExpiryDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <span class="badge @(reservation.IsApproved ? "bg-success" : "bg-warning")">
+                            @(reservation.IsApproved ? "Approved" : "Pending")
+                        </span>
+                    </td>
+                    <td>
+                        @if (!reservation.IsApproved)
+                        {
+                            <form asp-action="Approve" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@reservation.ID" />
+                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center">No pending reservations.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

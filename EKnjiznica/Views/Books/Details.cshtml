@@ -1,0 +1,139 @@
+﻿@model EKnjiznica.Models.Book
+
+<h2>Book Details</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<p><strong>Title:</strong> @Model.Title</p>
+<p><strong>Author:</strong> @Model.Author</p>
+<p><strong>Year:</strong> @Model.Year</p>
+<p><strong>Genre:</strong> @Model.Genre</p>
+<p><strong>Available:</strong> @(Model.IsAvailable ? "Yes" : "No")</p>
+
+@{
+    var reviews = ViewBag.Reviews as IEnumerable<EKnjiznica.Models.Review> ?? new List<EKnjiznica.Models.Review>();
+    var averageRating = ViewBag.AverageRating as double? ?? 0;
+    var reviewCount = ViewBag.ReviewCount as int? ?? 0;
+}
+
+@if (reviewCount > 0)
+{
+    <div class="mt-3">
+        <p><strong>Average Rating:</strong> @averageRating.ToString("F1") / 5.0 (@reviewCount review@(reviewCount != 1 ? "s" : ""))</p>
+    </div>
+}
+
+<p>
+    @if (User.IsInRole("Librarian"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    }
+    @if (User.IsInRole("Member") && Model.IsAvailable)
+    {
+        <form asp-controller="Reservations" asp-action="Reserve" method="post" style="display:inline;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="bookId" value="@Model.Id" />
+            <button type="submit" class="btn btn-success">Reserve This Book</button>
+        </form>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</p>
+
+<hr />
+
+<h3>Reviews</h3>
+
+@if (User.IsInRole("Member"))
+{
+    var currentUserEmail = User.Identity?.Name;
+    var hasReviewed = reviews.Any(r => r.User?.Email == currentUserEmail);
+    
+    if (!hasReviewed)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>Write a Review</h5>
+            </div>
+            <div class="card-body">
+                <form asp-controller="Reviews" asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="bookId" value="@Model.Id" />
+                    
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Rating</label>
+                        <select name="rating" class="form-control" required>
+                            <option value="">-- Select Rating --</option>
+                            <option value="1">1 - Poor</option>
+                            <option value="2">2 - Fair</option>
+                            <option value="3">3 - Good</option>
+                            <option value="4">4 - Very Good</option>
+                            <option value="5">5 - Excellent</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">Comment (Optional)</label>
+                        <textarea name="comment" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    }
+}
+
+@if (reviews.Any())
+{
+    @foreach (var review in reviews)
+    {
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>@review.User?.Email</strong>
+                        <span class="text-warning">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= review.Rating)
+                                {
+                                    <span>★</span>
+                                }
+                                else
+                                {
+                                    <span>☆</span>
+                                }
+                            }
+                        </span>
+                        <span class="text-muted">(@review.Rating / 5)</span>
+                    </div>
+                    <small class="text-muted">@review.ReviewDate.ToString("yyyy-MM-dd")</small>
+                </div>
+                @if (!string.IsNullOrEmpty(review.Comment))
+                {
+                    <p class="mt-2">@review.Comment</p>
+                }
+                @if (User.IsInRole("Member") && review.User?.Email == User.Identity?.Name)
+                {
+                    <form asp-controller="Reviews" asp-action="Delete" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete your review?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@review.ID" />
+                        <button type="submit" class="btn btn-sm btn-danger mt-2">Delete Review</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p class="text-muted">No reviews yet. Be the first to review this book!</p>
+}

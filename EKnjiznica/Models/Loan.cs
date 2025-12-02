@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace EKnijiznica.Models
+namespace EKnjiznica.Models
 {
     public class Loan
     {

@@ -1,0 +1,59 @@
+@model IEnumerable<EKnjiznica.Models.Loan>
+
+@{
+    ViewData["Title"] = "All Loans";
+}
+
+<h2>All Loans</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Member</th>
+            <th>Loan Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var loan in Model)
+        {
+            <tr>
+                <td>@loan.Book.Title</td>
+                <td>@loan.User?.Email</td>
+                <td>@loan.LoanDate.ToString("yyyy-MM-dd")</td>
+                <td>@loan.DueDate.ToString("yyyy-MM-dd")</td>
+                <td>@(loan.ReturnDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                <td>
+                    <span class="badge @(loan.Status == "Active" ? "bg-success" : loan.Status == "Overdue" ? "bg-danger" : "bg-secondary")">
+                        @loan.Status
+                    </span>
+                </td>
+                <td>
+                    @if (loan.Status != "Returned")
+                    {
+                        <form asp-action="Return" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@loan.ID" />
+                            <button type="submit" class="btn btn-sm btn-primary">Return</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

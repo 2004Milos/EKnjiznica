@@ -1,0 +1,47 @@
+@model IEnumerable<EKnjiznica.Models.Loan>
+
+@{
+    ViewData["Title"] = "My Loans";
+}
+
+<h2>My Loans</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Author</th>
+            <th>Loan Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var loan in Model)
+            {
+                <tr>
+                    <td>@loan.Book.Title</td>
+                    <td>@loan.Book.Author</td>
+                    <td>@loan.LoanDate.ToString("yyyy-MM-dd")</td>
+                    <td>@loan.DueDate.ToString("yyyy-MM-dd")</td>
+                    <td>@(loan.ReturnDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                    <td>
+                        <span class="badge @(loan.Status == "Active" ? "bg-success" : loan.Status == "Overdue" ? "bg-danger" : "bg-secondary")">
+                            @loan.Status
+                        </span>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">No loans found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

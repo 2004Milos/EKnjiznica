@@ -1,0 +1,55 @@
+@model IEnumerable<EKnjiznica.Models.Fine>
+
+@{
+    ViewData["Title"] = "My Fines";
+}
+
+<h2>My Fines</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Reason</th>
+            <th>Issue Date</th>
+            <th>Status</th>
+            <th>Paid Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var fine in Model)
+            {
+                <tr>
+                    <td>@fine.Amount.ToString("F2") EUR</td>
+                    <td>@fine.Reason</td>
+                    <td>@fine.IssueDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <span class="badge @(fine.IsPaid ? "bg-success" : "bg-danger")">
+                            @(fine.IsPaid ? "Paid" : "Unpaid")
+                        </span>
+                    </td>
+                    <td>@(fine.PaidDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">No fines found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

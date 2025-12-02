@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace EKnijiznica.Models
+namespace EKnjiznica.Models
 {
     public class Reservation
     {
@@ -15,5 +15,6 @@ namespace EKnijiznica.Models
 
         public DateTime ReservationDate { get; set; } = DateTime.Now;
         public DateTime ExpiryDate { get; set; }
+        public bool IsApproved { get; set; }
     }
 }
