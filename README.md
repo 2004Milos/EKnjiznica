@@ -1,28 +1,134 @@
-##Naslov projekta: E-knjižnica – Sistem za upravljanje digitalne knjižnice
-Člani ekipe:
-70095915 Miloš Mladenović
-63240392 Luka Đorđević
+# EKnjiznica – Sistem za upravljanje digitalne knjižnice
+## Informacijski sistemi
 
-Informacijski sistem E-knjižnice bo podpiral upravljanje majhne knjižnice, s čimer bo postopek izposoje in vračila knjig hitrejši in bolj organiziran, hkrati pa bo spremljal člane in razpoložljivost knjig. Sistem bo knjižničarjem omogočil upravljanje knjig in informacij o članih, sledenje izposojenim ali rezerviranim knjigam ter ustvarjanje osnovnih poročil.
+## Avtorji
 
-Člani knjižnice bodo lahko iskali po katalogu, videli, katere knjige so na voljo, zahtevali izposojo ali rezervacijo knjig ter si ogledali zgodovino izposoje. Izposojene knjige bodo samodejno označene kot nedostopne, rezervirane knjige pa bodo zadržane za omejen čas, dokler jih ne prevzamejo. Knjige, ki so zapadle, bodo za knjižničarje označene, kar bo omogočilo enostavno spremljanje vračil.
+- **70095915 - Miloš Mladenović**
+- **63240392 - Luka Đorđević**
 
-Uporabniške vloge:
+## Opis projekta
 
-Knjižničar: upravlja knjige in člane, odobrava zahteve za izposojo, spremlja knjige, ki so zapadle, in ustvarja poročila.
+EKnjiznica je informacijski sistem za upravljanje digitalne knjižnice, ki omogoča učinkovito upravljanje s knjigami, člani, izposojami in rezervacijami. Sistem vključuje:
 
-Član: išče po katalogu, zahteva izposojo ali rezervacijo knjig in preverja zgodovino izposoje.
+- **Spletno aplikacijo** (ASP.NET Core) - za knjižničarje in administratorje
+- **Android mobilno aplikacijo** - za člane knjižnice
+- **REST API** - za komunikacijo med spletno in mobilno aplikacijo
 
-Načrtovane entitete:
+## Tehnologije
 
-Knjiga (ID, naslov, avtor, žanr, leto izdaje, razpoložljivost)
+### Spletna aplikacija
+- ASP.NET Core 8.0
+- Entity Framework Core 8.0
+- SQL Server (Azure SQL Database)
+- ASP.NET Core Identity
+- JWT Bearer Authentication
+- Bootstrap 5
 
-Član (ID, ime, e-pošta, datum registracije, izposojene knjige)
+### Mobilna aplikacija
+- Java
+- Android SDK
+- Retrofit 2.9
+- Gson
+- Material Design Components
 
-Zapis o izposoji (ID, ID člana, ID knjige, datum izposoje, datum zapadlosti, datum vračila, status)
+### Deployment
+- Microsoft Azure (App Service + SQL Database)
 
-Rezervacija (ID, ID člana, ID knjige, datum rezervacije, datum poteka)
+## Struktura projekta
 
-Sistem bo zagotavljal poročila, kot so seznami knjig z zapadlim rokom, najpogosteje izposojenih naslovov in aktivnih rezervacij. Knjižničarjem bo pomagal vzdrževati organizacijo, zmanjšati napake in izboljšati splošno izkušnjo za člane knjižnice.
+```
+SISTEM/
+├── EKnjiznica/              # Spletna aplikacija
+│   ├── EKnjiznica/
+│   │   ├── Controllers/     # MVC in API kontrolerji
+│   │   ├── Models/          # Modeli podatkov
+│   │   ├── Views/           # Razor views
+│   │   ├── Data/            # DbContext in migracije
+│   │   └── wwwroot/         # Statične datoteke
+│   └── EKnjiznica.sln
+│
+└── Mobile/                  # Android mobilna aplikacija
+    └── app/
+        ├── src/main/java/
+        │   ├── activities/  # Android aktivnosti
+        │   ├── adapters/    # RecyclerView adapterji
+        │   ├── api/         # API servisi
+        │   ├── models/      # Modeli podatkov
+        │   └── utils/       # Pomožne razrede
+        └── src/main/res/    # Resursi
+```
 
-Projekt prikazuje, kako lahko sodoben informacijski sistem učinkovito podpira vsakodnevno delovanje knjižnice, hkrati pa zagotavlja jasno sledenje knjigam in članom ter poenostavlja postopke izposoje in rezervacije.
+## Funkcionalnosti in Uporabniške vloge
+
+### Za knjižničarje (Librarian)
+- Upravljanje s knjigami (dodajanje, urejanje, brisanje)
+- Upravljanje z izposojami (ustvarjanje, vračilo, pregled)
+- Upravljanje z rezervacijami (pregled, odobritev)
+- Upravljanje z globami (ustvarjanje, označevanje kot plačane)
+- Upravljanje s člani
+- Pregled statistike
+- Samodejno označevanje zapadlih izposoj
+
+### Za člane (Member)
+- Pregled kataloga knjig
+- Iskanje knjig
+- Rezerviranje razpoložljivih knjig
+- Pregled lastnih izposoj
+- Pregled lastnih rezervacij
+- Pregled glob
+- Recenziranje knjig (spletna aplikacija)
+
+## Baza podatkov
+
+### Entitete
+
+**Knjiga (Book)**: ID, naslov, avtor, leto izdaje, žanr, razpoložljivost
+
+**Izposoja (Loan)**: ID, ID uporabnika, ID knjige, datum izposoje, datum zapadlosti, datum vračila, status
+
+**Rezervacija (Reservation)**: ID, ID uporabnika, ID knjige, datum rezervacije, datum poteka, status odobritve
+
+**Globa (Fine)**: ID, ID uporabnika, znesek, razlog, datum izdaje, status plačila, datum plačila
+
+**Recenzija (Review)**: ID, ID knjige, ID uporabnika, ocena (1-5), komentar, datum recenzije
+
+## API Endpoints
+
+### Avtentikacija
+- `POST /api/AuthApi/login` - Prijava uporabnika
+- `POST /api/AuthApi/register` - Registracija novega uporabnika
+
+### Knjige
+- `GET /api/BooksApi` - Seznam vseh knjig
+- `GET /api/BooksApi/{id}` - Podrobnosti knjige
+- `POST /api/BooksApi` - Dodajanje knjige (Librarian)
+- `PUT /api/BooksApi/{id}` - Urejanje knjige (Librarian)
+- `DELETE /api/BooksApi/{id}` - Brisanje knjige (Librarian)
+
+### Izposoje
+- `GET /api/LoansApi` - Vse izposoje (Librarian)
+- `GET /api/LoansApi/my` - Moje izposoje (Member)
+- `POST /api/LoansApi/create` - Ustvarjanje izposoje (Librarian)
+- `POST /api/LoansApi/return/{loanId}` - Vračilo izposoje (Librarian)
+
+### Rezervacije
+- `POST /api/ReservationsApi/{bookId}` - Rezerviranje knjige (Member)
+- `GET /api/ReservationsApi` - Vse rezervacije (Librarian)
+- `GET /api/ReservationsApi/my` - Moje rezervacije (Member)
+- `POST /api/ReservationsApi/approve/{reservationId}` - Odobritev rezervacije (Librarian)
+
+## Privzeti uporabniki
+
+**Knjižničar:**
+- Email: `librarian@lib.com`
+- Geslo: `Test123!`
+
+**Član:**
+- Registruju ih knjizničari
+
+## Deployment
+
+Spletna aplikacija je nameščena na **Microsoft Azure**:
+- Web App: Azure App Service
+- Database: Azure SQL Database
+- URL: `https://eknjiznica20260107181458.azurewebsites.net/`
