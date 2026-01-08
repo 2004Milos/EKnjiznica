@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.eknjiznica">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.EKnjiznica"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.BooksActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.BookDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AddEditBookActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MyLoansActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MyReservationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MyFinesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AllLoansActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AllReservationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AllFinesActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

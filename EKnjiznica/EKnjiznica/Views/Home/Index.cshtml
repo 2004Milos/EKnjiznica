@@ -1,0 +1,122 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if (User.Identity?.IsAuthenticated == true)
+{
+    @if (User.IsInRole("Librarian"))
+    {
+        <div class="text-center mb-4">
+            <h1 class="display-4">Welcome, Librarian!</h1>
+            <p class="lead">Library Management Dashboard</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Books</h5>
+                        <h2 class="card-text">@ViewBag.TotalBooks</h2>
+                        <a asp-controller="Books" asp-action="Index" class="btn btn-light btn-sm">Manage Books</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Available Books</h5>
+                        <h2 class="card-text">@ViewBag.AvailableBooks</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Loans</h5>
+                        <h2 class="card-text">@ViewBag.ActiveLoans</h2>
+                        <a asp-controller="Loans" asp-action="Index" class="btn btn-light btn-sm">Manage Loans</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Reservations</h5>
+                        <h2 class="card-text">@ViewBag.PendingReservations</h2>
+                        <a asp-controller="Reservations" asp-action="Index" class="btn btn-light btn-sm">View Reservations</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-white bg-secondary">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Members</h5>
+                        <h2 class="card-text">@ViewBag.TotalMembers</h2>
+                        <a asp-controller="Users" asp-action="Index" class="btn btn-light btn-sm">Manage Members</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h3>Quick Actions</h3>
+            <a asp-controller="Books" asp-action="Create" class="btn btn-primary">Add New Book</a>
+            <a asp-controller="Books" asp-action="Index" class="btn btn-outline-primary">View All Books</a>
+            <a asp-controller="Loans" asp-action="Index" class="btn btn-outline-info">View All Loans</a>
+            <a asp-controller="Reservations" asp-action="Index" class="btn btn-outline-warning">View Reservations</a>
+        </div>
+    }
+    else if (User.IsInRole("Member"))
+    {
+        <div class="text-center mb-4">
+            <h1 class="display-4">Welcome to EKnjiznica!</h1>
+            <p class="lead">Your Personal Library Dashboard</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">My Active Loans</h5>
+                        <h2 class="card-text">@ViewBag.MyActiveLoans</h2>
+                        <a asp-controller="Loans" asp-action="MyLoans" class="btn btn-light btn-sm">View My Loans</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Reservations</h5>
+                        <h2 class="card-text">@ViewBag.MyPendingReservations</h2>
+                        <a asp-controller="Reservations" asp-action="MyReservations" class="btn btn-light btn-sm">View My Reservations</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Available Books</h5>
+                        <h2 class="card-text">@ViewBag.AvailableBooks</h2>
+                        <a asp-controller="Books" asp-action="Index" class="btn btn-light btn-sm">Browse Books</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h3>Quick Actions</h3>
+            <a asp-controller="Books" asp-action="Index" class="btn btn-primary">Browse Available Books</a>
+            <a asp-controller="Loans" asp-action="MyLoans" class="btn btn-outline-primary">View My Loans</a>
+            <a asp-controller="Reservations" asp-action="MyReservations" class="btn btn-outline-warning">View My Reservations</a>
+        </div>
+    }
+}
+else
+{
+    <div class="text-center">
+        <h1 class="display-4">Welcome to EKnjiznica</h1>
+        <p class="lead">Your Digital Library Management System</p>
+        <hr />
+        <p>Please <a asp-area="Identity" asp-page="/Account/Login">login</a> to access the library. New accounts are registered by librarians</p>
+    </div>
+}

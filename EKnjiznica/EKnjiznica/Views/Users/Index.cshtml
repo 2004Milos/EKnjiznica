@@ -1,0 +1,62 @@
+@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>
+
+@{
+    ViewData["Title"] = "Manage Members";
+}
+
+<h2>Manage Members</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New User</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Email Confirmed</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Email</td>
+                    <td>@(user.EmailConfirmed ? "Yes" : "No")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-sm btn-info">Details</a>
+                        <form asp-action="Delete" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@user.Id" />
+                                    
+                            @if (user.Email != "librarian@lib.com")
+                            {
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            }
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3" class="text-center">No members found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

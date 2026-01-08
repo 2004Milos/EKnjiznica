@@ -1,0 +1,45 @@
+@model IEnumerable<EKnjiznica.Models.Reservation>
+
+@{
+    ViewData["Title"] = "My Reservations";
+}
+
+<h2>My Reservations</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Author</th>
+            <th>Reservation Date</th>
+            <th>Expiry Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var reservation in Model)
+            {
+                <tr>
+                    <td>@reservation.Book.Title</td>
+                    <td>@reservation.Book.Author</td>
+                    <td>@reservation.ReservationDate.ToString("yyyy-MM-dd")</td>
+                    <td>@reservation.ExpiryDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <span class="badge @(reservation.IsApproved ? "bg-success" : "bg-warning")">
+                            @(reservation.IsApproved ? "Approved" : "Pending")
+                        </span>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">No reservations found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

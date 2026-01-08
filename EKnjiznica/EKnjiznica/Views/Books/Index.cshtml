@@ -1,0 +1,82 @@
+﻿@model IEnumerable<EKnjiznica.Models.Book>
+
+@{
+    ViewData["Title"] = "Books";
+}
+
+<h2>Books</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (User.IsInRole("Librarian"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </p>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Year</th>
+            <th>Genre</th>
+            <th>Available</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var b in Model)
+            {
+                <tr>
+                    <td>@b.Title</td>
+                    <td>@b.Author</td>
+                    <td>@b.Year</td>
+                    <td>@b.Genre</td>
+                    <td>
+                        <span class="badge @(b.IsAvailable ? "bg-success" : "bg-danger")">
+                            @(b.IsAvailable ? "Yes" : "No")
+                        </span>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@b.Id" class="btn btn-sm btn-info">Details</a>
+                        @if (User.IsInRole("Librarian"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@b.Id" class="btn btn-sm btn-warning">Edit</a>
+                            <form asp-action="Delete" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this book?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@b.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        }
+                        @if (User.IsInRole("Member") && b.IsAvailable)
+                        {
+                            <form asp-controller="Reservations" asp-action="Reserve" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="bookId" value="@b.Id" />
+                                <button type="submit" class="btn btn-sm btn-success">Reserve</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">No books found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
