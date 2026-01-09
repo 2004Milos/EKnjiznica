@@ -7,6 +7,7 @@ public class Loan {
     private String userId;
     private int bookId;
     private Book book;
+    private Object user; // Can be Map<String, Object> when deserialized from JSON
     private Date loanDate;
     private Date dueDate;
     private Date returnDate;
@@ -77,5 +78,13 @@ public class Loan {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Object getUser() {
+        return user;
+    }
+
+    public void setUser(Object user) {
+        this.user = user;
     }
 }

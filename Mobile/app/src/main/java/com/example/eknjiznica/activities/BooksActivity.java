@@ -2,6 +2,8 @@ package com.example.eknjiznica.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +21,7 @@ import com.example.eknjiznica.models.ApiResponse;
 import com.example.eknjiznica.models.Book;
 import com.example.eknjiznica.utils.SharedPreferencesHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,7 @@ public class BooksActivity extends AppCompatActivity {
     private SharedPreferencesHelper prefsHelper;
     private ApiService apiService;
     private FloatingActionButton fabAddBook;
+    private TextInputEditText etSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,7 @@ public class BooksActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerViewBooks);
         fabAddBook = findViewById(R.id.fabAddBook);
+        etSearch = findViewById(R.id.etSearch);
 
         bookList = new ArrayList<>();
         adapter = new BookAdapter(bookList, prefsHelper.isLibrarian(), new BookAdapter.OnBookClickListener() {
@@ -75,11 +80,39 @@ public class BooksActivity extends AppCompatActivity {
             fabAddBook.setVisibility(View.GONE);
         }
 
+        // Setup search
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Debounce search - search after user stops typing
+                recyclerView.removeCallbacks(searchRunnable);
+                recyclerView.postDelayed(searchRunnable, 500);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
         loadBooks();
     }
 
+    private final Runnable searchRunnable = new Runnable() {
+        @Override
+        public void run() {
+            String searchQuery = etSearch.getText().toString().trim();
+            loadBooks(searchQuery.isEmpty() ? null : searchQuery);
+        }
+    };
+
     private void loadBooks() {
-        Call<ApiResponse<List<Book>>> call = apiService.getBooks();
+        loadBooks(null);
+    }
+
+    private void loadBooks(String searchQuery) {
+        Call<ApiResponse<List<Book>>> call = apiService.getBooks(searchQuery);
         call.enqueue(new Callback<ApiResponse<List<Book>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<Book>>> call, Response<ApiResponse<List<Book>>> response) {

@@ -83,13 +83,13 @@
         android:layout_marginTop="32dp" />
 
     <TextView
-        android:id="@+id/tvRegister"
+        android:id="@+id/tvInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Don't have an account? Register"
-        android:textColor="@android:color/holo_blue_dark"
-        android:clickable="true"
-        android:focusable="true"
+        android:text="Member accounts are created by librarians"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        android:gravity="center"
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -62,48 +62,7 @@ namespace EKnjiznica.Controllers
             });
         }
 
-        [HttpPost("register")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
-        {
-            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
-            {
-                return BadRequest(new { message = "Email and password are required." });
-            }
-
-            var existingUser = await _userManager.FindByEmailAsync(request.Email);
-            if (existingUser != null)
-            {
-                return BadRequest(new { message = "User with this email already exists." });
-            }
-
-            var user = new IdentityUser
-            {
-                UserName = request.Email,
-                Email = request.Email,
-                EmailConfirmed = true
-            };
-
-            var result = await _userManager.CreateAsync(user, request.Password);
-            if (!result.Succeeded)
-            {
-                return BadRequest(new { message = string.Join(", ", result.Errors.Select(e => e.Description)) });
-            }
-
-            // Dodeli Member role po defaultu
-            await _userManager.AddToRoleAsync(user, "Member");
-
-            // Generiši JWT token
-            var token = GenerateJwtToken(user);
-
-            return Ok(new
-            {
-                token = token,
-                email = user.Email,
-                userId = user.Id,
-                roles = new[] { "Member" }
-            });
-        }
+        // Register endpoint removed - account creation is now only available through UsersApiController (Librarian only)
 
         private string GenerateJwtToken(IdentityUser user)
         {
@@ -143,12 +102,6 @@ namespace EKnjiznica.Controllers
     }
 
     public class LoginRequest
-    {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-
-    public class RegisterRequest
     {
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;

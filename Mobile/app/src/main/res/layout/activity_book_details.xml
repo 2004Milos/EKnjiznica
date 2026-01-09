@@ -83,6 +83,42 @@
                 android:backgroundTint="@android:color/holo_red_dark" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reviews"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvAverageRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Average Rating: -"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btnAddReview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Review"
+            android:layout_marginBottom="16dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewReviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

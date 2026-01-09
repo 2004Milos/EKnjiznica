@@ -4,7 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/2004m/Desktop/Erasmus/INFSIS/SISTEM/Mobile/app/src/main/res/layout/activity_home.xml" value="0.11302083333333333" />
+        <entry key="..\:/Users/2004m/Desktop/Erasmus/INFSIS/SISTEM/Mobile/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/Users/2004m/Desktop/Erasmus/INFSIS/SISTEM/Mobile/app/src/main/res/layout/activity_main.xml" value="0.11302083333333333" />
+        <entry key="..\:/Users/2004m/Desktop/Erasmus/INFSIS/SISTEM/Mobile/app/src/main/res/layout/activity_users_management.xml" value="0.17135416666666667" />
       </map>
     </option>
   </component>

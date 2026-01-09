@@ -7,6 +7,7 @@ public class Reservation {
     private String userId;
     private int bookId;
     private Book book;
+    private Object user; // Can be Map<String, Object> when deserialized from JSON
     private Date reservationDate;
     private Date expiryDate;
     private boolean isApproved;
@@ -68,5 +69,13 @@ public class Reservation {
 
     public void setApproved(boolean approved) {
         isApproved = approved;
+    }
+
+    public Object getUser() {
+        return user;
+    }
+
+    public void setUser(Object user) {
+        this.user = user;
     }
 }

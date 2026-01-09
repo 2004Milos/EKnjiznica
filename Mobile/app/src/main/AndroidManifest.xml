@@ -25,13 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.RegisterActivity"
-            android:exported="false" />
-        <activity
+            <activity
+                android:name=".activities.LoginActivity"
+                android:exported="false" />
+            <activity
             android:name=".activities.HomeActivity"
             android:exported="false" />
         <activity
@@ -60,6 +57,9 @@
             android:exported="false" />
         <activity
             android:name=".activities.AllFinesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.UsersManagementActivity"
             android:exported="false" />
     </application>
 

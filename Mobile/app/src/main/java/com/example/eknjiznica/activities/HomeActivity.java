@@ -13,10 +13,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.eknjiznica.R;
+import com.example.eknjiznica.api.ApiService;
+import com.example.eknjiznica.api.RetrofitClient;
+import com.example.eknjiznica.models.ApiResponse;
 import com.example.eknjiznica.utils.SharedPreferencesHelper;
+
+import org.json.JSONObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity {
     private SharedPreferencesHelper prefsHelper;
+    private ApiService apiService;
     private TextView tvWelcome, tvMemberSection, tvLibrarianSection;
     private CardView cvBooks, cvLoans, cvReservations, cvFines, cvManageBooks, cvManageLoans, cvManageReservations, cvManageFines, cvManageMembers;
 
@@ -26,6 +36,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         prefsHelper = new SharedPreferencesHelper(this);
+        apiService = RetrofitClient.getInstance().getApiService();
 
         if (!prefsHelper.isLoggedIn()) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -42,6 +53,44 @@ public class HomeActivity extends AppCompatActivity {
 
         setupViews();
         setupNavigation();
+        loadStatistics();
+    }
+
+    private void loadStatistics() {
+        String token = prefsHelper.getAuthHeader();
+        if (token == null) return;
+
+        if (prefsHelper.isLibrarian()) {
+            Call<ApiResponse<Object>> call = apiService.getLibrarianStatistics(token);
+            call.enqueue(new Callback<ApiResponse<Object>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<Object>> call, Response<ApiResponse<Object>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                        // Statistics loaded - could display in cards if needed
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<Object>> call, Throwable t) {
+                    // Silently fail
+                }
+            });
+        } else if (prefsHelper.isMember()) {
+            Call<ApiResponse<Object>> call = apiService.getMemberStatistics(token);
+            call.enqueue(new Callback<ApiResponse<Object>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<Object>> call, Response<ApiResponse<Object>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                        // Statistics loaded - could display in cards if needed
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<Object>> call, Throwable t) {
+                    // Silently fail
+                }
+            });
+        }
     }
 
     private void setupViews() {
@@ -135,7 +184,8 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         cvManageMembers.setOnClickListener(v -> {
-            Toast.makeText(this, "Manage Members - To be implemented", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, UsersManagementActivity.class);
+            startActivity(intent);
         });
     }
 

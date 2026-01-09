@@ -1,6 +1,7 @@
 package com.example.eknjiznica.models;
 
 import java.util.Date;
+import java.util.Map;
 
 public class Review {
     private int id;
@@ -9,6 +10,7 @@ public class Review {
     private int rating;
     private String comment;
     private Date reviewDate;
+    private Object user; // Can be Map<String, Object> when deserialized from JSON
 
     public Review() {
     }
@@ -59,5 +61,13 @@ public class Review {
 
     public void setReviewDate(Date reviewDate) {
         this.reviewDate = reviewDate;
+    }
+
+    public Object getUser() {
+        return user;
+    }
+
+    public void setUser(Object user) {
+        this.user = user;
     }
 }

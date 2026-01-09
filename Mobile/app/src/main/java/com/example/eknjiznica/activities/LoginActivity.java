@@ -24,7 +24,6 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
     private EditText etEmail, etPassword;
     private Button btnLogin;
-    private TextView tvRegister;
     private SharedPreferencesHelper prefsHelper;
     private ApiService apiService;
 
@@ -46,12 +45,8 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        tvRegister = findViewById(R.id.tvRegister);
 
         btnLogin.setOnClickListener(v -> login());
-        tvRegister.setOnClickListener(v -> {
-            startActivity(new Intent(this, RegisterActivity.class));
-        });
     }
 
     private void login() {

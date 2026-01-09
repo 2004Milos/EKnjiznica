@@ -32,7 +32,8 @@ namespace EKnjiznica.Controllers
                     ViewBag.ActiveLoans = await _context.Loans.CountAsync(l => l.Status == "Active");
                     ViewBag.PendingReservations = await _context.Reservations.CountAsync(r => !r.IsApproved);
                     var members = await _userManager.GetUsersInRoleAsync("Member");
-                    ViewBag.TotalMembers = members.Count;
+                    var librarians = await _userManager.GetUsersInRoleAsync("Librarian");
+                    ViewBag.TotalMembers = members.Count + librarians.Count;
                 }
                 else if (User.IsInRole("Member"))
                 {

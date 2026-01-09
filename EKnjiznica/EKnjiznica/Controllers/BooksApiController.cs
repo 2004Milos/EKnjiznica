@@ -25,11 +25,22 @@ namespace EKnjiznica.Controllers
         /// </summary>
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<ApiResponse<List<Book>>>> GetBooks()
+        public async Task<ActionResult<ApiResponse<List<Book>>>> GetBooks([FromQuery] string? search = null)
         {
             try
             {
-                var books = await _context.Books.ToListAsync();
+                var query = _context.Books.AsQueryable();
+                
+                if (!string.IsNullOrEmpty(search))
+                {
+                    search = search.ToLower();
+                    query = query.Where(b => 
+                        b.Title.ToLower().Contains(search) || 
+                        b.Author.ToLower().Contains(search) || 
+                        b.Genre.ToLower().Contains(search));
+                }
+                
+                var books = await query.ToListAsync();
                 return Ok(new ApiResponse<List<Book>>
                 {
                     Success = true,

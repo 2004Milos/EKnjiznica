@@ -1,15 +1,17 @@
 package com.example.eknjiznica.models;
 
-public class RegisterRequest {
+public class CreateUserRequest {
     private String email;
     private String password;
+    private String role;
 
-    public RegisterRequest() {
+    public CreateUserRequest() {
     }
 
-    public RegisterRequest(String email, String password) {
+    public CreateUserRequest(String email, String password, String role) {
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public String getEmail() {
@@ -26,5 +28,13 @@ public class RegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

@@ -15,6 +15,7 @@ import com.example.eknjiznica.models.Reservation;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ReservationViewHolder> {
     private List<Reservation> reservations;
@@ -51,6 +52,31 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             holder.tvAuthor.setText("Author: " + reservation.getBook().getAuthor());
         }
         
+        // Show user email for librarians
+        if (isLibrarian) {
+            String userEmail = "Unknown";
+            try {
+                if (reservation.getUser() != null) {
+                    Object userObj = reservation.getUser();
+                    if (userObj instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> userMap = (Map<String, Object>) userObj;
+                        Object emailObj = userMap.get("email");
+                        if (emailObj != null) {
+                            userEmail = emailObj.toString();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Fallback to userId if email not available
+                userEmail = reservation.getUserId() != null ? reservation.getUserId() : "Unknown";
+            }
+            holder.tvUserEmail.setText("User: " + userEmail);
+            holder.tvUserEmail.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvUserEmail.setVisibility(View.GONE);
+        }
+        
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         
         if (reservation.getReservationDate() != null) {
@@ -84,13 +110,14 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     static class ReservationViewHolder extends RecyclerView.ViewHolder {
-        TextView tvBookTitle, tvAuthor, tvReservationDate, tvExpiryDate, tvStatus;
+        TextView tvBookTitle, tvAuthor, tvUserEmail, tvReservationDate, tvExpiryDate, tvStatus;
         Button btnApprove;
 
         public ReservationViewHolder(@NonNull View itemView) {
             super(itemView);
             tvBookTitle = itemView.findViewById(R.id.tvBookTitle);
             tvAuthor = itemView.findViewById(R.id.tvAuthor);
+            tvUserEmail = itemView.findViewById(R.id.tvUserEmail);
             tvReservationDate = itemView.findViewById(R.id.tvReservationDate);
             tvExpiryDate = itemView.findViewById(R.id.tvExpiryDate);
             tvStatus = itemView.findViewById(R.id.tvStatus);

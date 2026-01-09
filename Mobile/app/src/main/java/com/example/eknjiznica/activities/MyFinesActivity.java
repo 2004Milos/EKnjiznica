@@ -12,19 +12,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eknjiznica.R;
 import com.example.eknjiznica.adapters.FineAdapter;
+import com.example.eknjiznica.api.ApiService;
+import com.example.eknjiznica.api.RetrofitClient;
+import com.example.eknjiznica.models.ApiResponse;
 import com.example.eknjiznica.models.Fine;
 import com.example.eknjiznica.utils.SharedPreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// Note: This activity assumes there will be a Fines API endpoint
-// For now, it's a placeholder that can be connected when the API is available
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MyFinesActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FineAdapter adapter;
     private List<Fine> fineList;
     private SharedPreferencesHelper prefsHelper;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +38,7 @@ public class MyFinesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_fines);
 
         prefsHelper = new SharedPreferencesHelper(this);
+        apiService = RetrofitClient.getInstance().getApiService();
 
         recyclerView = findViewById(R.id.recyclerViewFines);
 
@@ -40,8 +47,41 @@ public class MyFinesActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // TODO: Load fines from API when endpoint is available
-        Toast.makeText(this, "Fines feature - API endpoint needed", Toast.LENGTH_SHORT).show();
+        loadFines();
+    }
+
+    private void loadFines() {
+        String token = prefsHelper.getAuthHeader();
+        if (token == null) {
+            Toast.makeText(this, "Not authenticated", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        Call<ApiResponse<List<Fine>>> call = apiService.getMyFines(token);
+        call.enqueue(new Callback<ApiResponse<List<Fine>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<Fine>>> call, Response<ApiResponse<List<Fine>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    fineList.clear();
+                    fineList.addAll(response.body().getData());
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(MyFinesActivity.this, "Failed to load fines", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<Fine>>> call, Throwable t) {
+                Toast.makeText(MyFinesActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadFines();
     }
 
     @Override

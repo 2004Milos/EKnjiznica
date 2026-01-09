@@ -50,6 +50,7 @@ public class AllLoansActivity extends AppCompatActivity {
 
         loanList = new ArrayList<>();
         adapter = new LoanAdapter(loanList, true);
+        adapter.setOnReturnClickListener(loan -> returnLoan(loan.getId()));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
@@ -79,6 +80,33 @@ public class AllLoansActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ApiResponse<List<Loan>>> call, Throwable t) {
+                Toast.makeText(AllLoansActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void returnLoan(int loanId) {
+        String token = prefsHelper.getAuthHeader();
+        if (token == null) {
+            Toast.makeText(this, "Not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Call<ApiResponse<Loan>> call = apiService.returnLoan(token, loanId);
+        call.enqueue(new Callback<ApiResponse<Loan>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Loan>> call, Response<ApiResponse<Loan>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    Toast.makeText(AllLoansActivity.this, "Loan returned successfully!", Toast.LENGTH_SHORT).show();
+                    loadLoans();
+                } else {
+                    String message = response.body() != null ? response.body().getMessage() : "Failed to return loan";
+                    Toast.makeText(AllLoansActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Loan>> call, Throwable t) {
                 Toast.makeText(AllLoansActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

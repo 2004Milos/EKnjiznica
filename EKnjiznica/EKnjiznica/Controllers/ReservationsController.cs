@@ -26,8 +26,7 @@ namespace EKnjiznica.Controllers
             var reservations = await _context.Reservations
                 .Include(r => r.Book)
                 .Include(r => r.User)
-                .Where(r => !r.IsApproved)
-                .OrderBy(r => r.ReservationDate)
+                .OrderByDescending(r => r.ReservationDate)
                 .ToListAsync();
 
             return View(reservations);
